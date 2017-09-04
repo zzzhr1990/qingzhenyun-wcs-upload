@@ -2,7 +2,7 @@ import json
 import base64
 import hmac
 from hashlib import sha1
-from six.moves.urllib.parse import urlparse
+from six.moves import urllib
 
 """
 default config
@@ -53,7 +53,7 @@ class WcsAuth(object):
         """
         return: managertoken
         """
-        parsed_url = urlparse(url)
+        parsed_url = urllib.parse.urlparse(url)
         query = parsed_url.query
         path = parsed_url.path
         if query:
