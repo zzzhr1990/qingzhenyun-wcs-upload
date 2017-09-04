@@ -5,6 +5,7 @@ import hmac
 import time
 from hashlib import sha1
 from six.moves import urllib
+import six
 
 """
 default config
@@ -41,7 +42,7 @@ class WcsAuth(object):
         #    raise ValueError("Invalid deadline")
 
         json_put_policy = json.dumps(put_policy)
-        encode_put_policy = base64.urlsafe_b64encode(json_put_policy)
+        encode_put_policy = base64.urlsafe_b64encode(six.b(json_put_policy))
         tmp_encode_put_policy = encode_put_policy
         sign = hmac.new(self.secret_key.encode('utf-8'),
                         encode_put_policy.encode('utf-8'), sha1)

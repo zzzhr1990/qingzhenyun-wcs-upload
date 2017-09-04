@@ -7,6 +7,7 @@ import binascii
 import time
 import base64
 import json
+import six
 
 
 class WcsSliceUploader(object):
@@ -182,7 +183,8 @@ class WcsSliceUploader(object):
         url = ['{0}/mkfile/{1}'.format(host, self.size)]
         if self.params:
             for k, v in self.params.items():
-                url.append('x:{0}/{1}'.format(k, base64.urlsafe_b64encode(v)))
+                url.append('x:{0}/{1}'.format(k, six.
+                                              b(base64.urlsafe_b64encode(v))))
         url = '/'.join(url)
         return url
 

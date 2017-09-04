@@ -161,9 +161,10 @@ class WcsUtil(object):
     def wcs_entry(bucket, key):
         """Calc e"""
         if key is None:
-            return base64.urlsafe_b64encode('{0}'.format(bucket))
+            return base64.urlsafe_b64encode(six.b('{0}'.format(bucket)))
         else:
-            return base64.urlsafe_b64encode('{0}:{1}'.format(bucket, key))
+            return base64.urlsafe_b64encode(six.b('{0}:{1}'
+                                                  .format(bucket, key)))
 
     @staticmethod
     def default_wcs_auth():
