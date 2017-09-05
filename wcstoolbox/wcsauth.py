@@ -45,7 +45,7 @@ class WcsAuth(object):
         encode_put_policy = base64.urlsafe_b64encode(six.b(json_put_policy))
         tmp_encode_put_policy = encode_put_policy
         sign = hmac.new(self.secret_key.encode('utf-8'),
-                        encode_put_policy.encode('utf-8'), sha1)
+                        encode_put_policy, sha1)
         # encodeSign = base64.b64encode(Sign.hexdigest())
         encode_sign = base64.urlsafe_b64encode(sign.hexdigest())
         return '{0}:{1}:{2}'.format(self.access_key,
