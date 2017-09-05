@@ -49,8 +49,8 @@ class WcsAuth(object):
         # encodeSign = base64.b64encode(Sign.hexdigest())
         encode_sign = base64.urlsafe_b64encode(six.b(sign.hexdigest()))
         return '{0}:{1}:{2}'.format(self.access_key,
-                                    six.u(encode_sign),
-                                    six.u(tmp_encode_put_policy))
+                                    encode_sign.decode('utf-8'),
+                                    tmp_encode_put_policy.decode('utf-8'))
 
     def default_uploadtoken(self, bucket, key):
         """create default upload"""
