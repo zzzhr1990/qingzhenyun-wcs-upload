@@ -56,11 +56,13 @@ class WcsSliceUploader(object):
         logging.info("%s has %d blocks.File size %ld, block size %d",
                      upload_batch, self.num, self.size, self.block_size)
         upload_ctxs = []
+        block_id = 1
         for offset in self.offsetlist:
-            succ = self._make_block(offset, upload_batch)
+            succ = self._make_block(offset, upload_batch, block_id)
             if not succ:
                 return -1, {"message": u'UploadFail'}
             upload_ctxs.append(succ)
+            block_id = block_id + 1
 
         if len(upload_ctxs) != len(self.offsetlist):
             logging.warning("Uploaded blocks mismatch response.")
@@ -69,7 +71,7 @@ class WcsSliceUploader(object):
             logging.warning("Upload file to ws fail!")
         return code, body
 
-    def _make_block(self, offset, upload_batch):
+    def _make_block(self, offset, upload_batch, block_id):
         with open(self.filepath, "rb") as openfile:
             bput = WcsUtil.readfile(openfile, offset, self.put_size)
             url = self._mlkblock_url(offset)
@@ -96,14 +98,14 @@ class WcsSliceUploader(object):
                 if not rest_block_size > 0:
                     return self._post_success(blktext['ctx'])
             offset, code, ctx = self._make_bput(
-                openfile, blktext['ctx'], upload_batch, offset)
+                openfile, blktext['ctx'], upload_batch, offset, block_id)
             if self._need_retry(code) or code != 200:
                 logging.warning("make put file fail, code %d", code)
                 return self._post_fail(u'MAKE_PUT_FAIL')
             else:
                 return self._post_success(ctx)
 
-    def _make_bput(self, inputfile, ctx, upload_batch, offset):
+    def _make_bput(self, inputfile, ctx, upload_batch, offset, block_id):
         bputnum = 1
         offset_next = offset + self.put_size
         bput_next = WcsUtil.readfile(inputfile, offset_next, self.put_size)
@@ -129,9 +131,12 @@ class WcsSliceUploader(object):
             time_cost = time.time() - start_time
             file_size = len(bput_next)
             speed = file_size / time_cost
-            logging.debug("Upload block %d of %d, file size %s, speed %s/sec",
-                          bputnum, self.num, WcsUtil.sizeof_fmt(file_size),
-                          WcsUtil.sizeof_fmt(speed))
+            logging.info(file_size)
+            logging.debug(
+                "Upload block %d of %d (pic:%d), file size %s, speed %s/sec",
+                block_id, self.num, bputnum,
+                WcsUtil.sizeof_fmt(file_size),
+                WcsUtil.sizeof_fmt(speed))
             ctx = bputtext['ctx']
             offset_next = offset + bputtext['offset']
             bput_next = WcsUtil.readfile(inputfile, offset_next, self.put_size)
