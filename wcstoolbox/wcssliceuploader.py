@@ -117,7 +117,6 @@ class WcsSliceUploader(object):
                 ctx, bputnum, upload_batch, bput_next)
             crc = binascii.crc32(bput_next) % (1 << 32)
             while self._need_repost(bputcode, bputretry, crc, bputtext):
-                time.sleep(2)
                 bputcode, bputtext = self._make_bput_post(
                     ctx, bputnum, upload_batch, bput_next)
                 bputretry = bputretry - 1
