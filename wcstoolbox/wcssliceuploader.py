@@ -113,6 +113,7 @@ class WcsSliceUploader(object):
             return offset, 200, ctx
         while bput_next is not None and \
                 bputnum < self.block_size // self.put_size:
+            start_time = time.time()
             bputcode, bputtext = self._make_bput_post(
                 ctx, bputnum, upload_batch, bput_next)
             crc = binascii.crc32(bput_next) % (1 << 32)
@@ -125,6 +126,12 @@ class WcsSliceUploader(object):
                     "upload put file fail, code %d, response %s",
                     bputcode, json.dumps(bputtext))
                 return offset, bputcode, bputtext['message']
+            time_cost = time.time() - start_time
+            file_size = len(bput_next)
+            speed = file_size / time_cost
+            logging.debug("Upload block %d of %d, file size %s, speed %s/sec",
+                          bputnum, self.num, WcsUtil.sizeof_fmt(file_size),
+                          WcsUtil.sizeof_fmt(speed))
             ctx = bputtext['ctx']
             offset_next = offset + bputtext['offset']
             bput_next = WcsUtil.readfile(inputfile, offset_next, self.put_size)
