@@ -34,3 +34,18 @@ if code != 200:
 etag = body["hash"]
 # process return json
 ```
+```
+Python 3.6.2 (default, Jul 17 2017, 16:44:45)
+[GCC 4.2.1 Compatible Apple LLVM 8.1.0 (clang-802.0.42)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from wcstoolbox.wcssliceuploader import WcsSliceUploader
+>>> from wcstoolbox.wcsauth import WcsAuth
+>>> import logging
+>>> logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',datefmt='%Y-%m-%d %H:%M:%S')
+>>> upload_url = URL
+>>> auth = WcsAuth(AK,SK)
+>>> upload_token = auth.default_uploadtoken('other-storage','test/test.5678.9.0.1')
+>>> upload_token = auth.default_uploadtoken('other-storage','test/test.5678.9.0.2')
+>>> uploader = WcsSliceUploader(upload_token, '/Users/zzzhr/Downloads/ubuntu-17.04-server-amd64.iso', upload_url)
+>>> uploader.start_upload()
+```

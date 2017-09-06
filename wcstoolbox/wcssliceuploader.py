@@ -131,7 +131,6 @@ class WcsSliceUploader(object):
             time_cost = time.time() - start_time
             file_size = len(bput_next)
             speed = file_size / time_cost
-            logging.info(file_size)
             logging.debug(
                 "Upload block %d of %d (pic:%d), file size %s, speed %s/sec",
                 block_id, self.num, bputnum,
