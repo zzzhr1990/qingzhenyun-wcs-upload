@@ -1,3 +1,4 @@
+"""Used for wcs upload"""
 import os
 import requests
 import logging
@@ -79,10 +80,10 @@ class WcsSliceUploader(object):
             blkcode, blktext = self._do_post(
                 url=url, headers=headers, data=bput)
             while self._need_repost(blkcode, blkretry, crc, blktext):
-                time.sleep(2)
                 blkcode, blktext = self._do_post(
                     url=url, headers=headers, data=bput)
                 blkretry = blkretry - 1
+            logging.info("Block code %d, message %s", blkcode, blktext)
             if self._need_repost(blkcode, blkretry, crc, blktext):
                 logging.warning(
                     "make block file fail, code %d, response %s",
