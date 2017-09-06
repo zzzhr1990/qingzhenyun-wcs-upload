@@ -132,8 +132,8 @@ class WcsSliceUploader(object):
             file_size = len(bput_next)
             speed = file_size / time_cost
             logging.debug(
-                "Upload block %d of %d (pic:%d), file size %s, speed %s/sec",
-                block_id, self.num, bputnum,
+                "Upload block %d of %d (p:%d)[%s], file size %s, speed %s/sec",
+                block_id, self.num, bputnum, ctx,
                 WcsUtil.sizeof_fmt(file_size),
                 WcsUtil.sizeof_fmt(speed))
             ctx = bputtext['ctx']
