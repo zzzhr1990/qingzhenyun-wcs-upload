@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 import sys
 import os
 
-version = '0.1.2.2'
+version = '0.1.2'
 
 setup(name='qingzhenyun-wcs-upload',
       version=version,
