@@ -83,8 +83,9 @@ class WcsSliceUploader(object):
                 blkcode, blktext = self._do_post(
                     url=url, headers=headers, data=bput)
                 blkretry = blkretry - 1
-            logging.info("Block code %d, message %s", blkcode, blktext)
-            if self._need_repost(blkcode, blkretry, crc, blktext):
+            logging.debug("Block code %d, message %s", blkcode, blktext)
+            if self._need_repost(blkcode, blkretry, crc, blktext) or \
+                    blkcode != 200:
                 logging.warning(
                     "make block file fail, code %d, response %s",
                     blkcode, json.dumps(blktext))
