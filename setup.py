@@ -21,7 +21,6 @@ Qingzhenyun WCS SDK""",
           'requests>=2.18.1',
           'python-magic>=0.4.13',
           'six>=1.10.0',
-          'Twisted>=17.5.0',
           'urllib3>=1.21.1'
       ],
       entry_points="""
