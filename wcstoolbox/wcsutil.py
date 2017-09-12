@@ -42,21 +42,24 @@ class WcsUtil(object):
         return sha_hash.digest()
 
     @staticmethod
-    def wcs_etag(file_path, block_size=1024 * 1024 * 4):
+    def wcs_etag(file_path, block_size=1024 * 1024 * 4, binary=False):
         """Calc WCS Etag(FileHash)"""
         with open(file_path, 'rb') as input_stream:
             array = [WcsUtil.sha1(block) for block in WcsUtil.file_iter(
                 input_stream, 0, block_size)]
-            if len(array) == 0:
+            block_len = len(array)
+            if block_len == 0:
                 array = [WcsUtil.sha1(b'')]
-            if len(array) == 1:
+            if block_len == 1:
                 data = array[0]
                 prefix = b'\x16'
             else:
                 sha1_str = six.b('').join(array)
                 data = WcsUtil.sha1(sha1_str)
                 prefix = b'\x96'
-            return base64.urlsafe_b64encode(prefix + data)
+            if binary:
+                return base64.urlsafe_b64encode(prefix + data)
+            return base64.urlsafe_b64encode(prefix + data).encode('utf-8')
 
     @staticmethod
     def wcs_etag_bytes(buff, block_size=1024 * 1024 * 4):
