@@ -59,7 +59,7 @@ class WcsUtil(object):
                 prefix = b'\x96'
             if binary:
                 return base64.urlsafe_b64encode(prefix + data)
-            return base64.urlsafe_b64encode(prefix + data).encode('utf-8')
+            return base64.urlsafe_b64encode(prefix + data).decode('utf-8')
 
     @staticmethod
     def wcs_etag_bytes(buff, block_size=1024 * 1024 * 4):
