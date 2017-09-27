@@ -82,8 +82,10 @@ class WcsAuth(object):
                 signing_str = ''.join([path, "\n"])
         sign_str = hmac.new(self.secret_key.encode('utf-8'),
                             signing_str.encode('utf-8'), sha1)
-        encode_sign_str = base64.urlsafe_b64encode(sign_str.hexdigest())
-        return '{0}:{1}'.format(self.access_key, encode_sign_str)
+        encode_sign_str = base64.urlsafe_b64encode(sign_str
+                                                   .hexdigest().encode('utf-8'))
+        return '{0}:{1}'.format(self.access_key,
+                                encode_sign_str.decode('utf-8'))
 
     @staticmethod
     def check_key(access_key, secret_key):
