@@ -10,6 +10,7 @@ from io import BytesIO
 from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError as RConnectionError
 from wcstoolbox.wcsauth import WcsAuth
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 
 
 class WcsUtil(object):
@@ -40,6 +41,30 @@ class WcsUtil(object):
         sha_hash = hashlib.sha1()
         sha_hash.update(data)
         return sha_hash.digest()
+
+    @staticmethod
+    def urlsafe_base64_encode(data):
+        """urlsafe的base64编码:
+        对提供的数据进行urlsafe的base64编码。规格参考：
+        Args:
+            data: 待编码的数据，一般为字符串
+        Returns:
+            编码后的字符串
+        """
+        ret = urlsafe_b64encode(six.b(data))
+        return ret.decode('utf-8')
+
+    @staticmethod
+    def urlsafe_base64_decode(data):
+        """urlsafe的base64解码:
+        对提供的urlsafe的base64编码的数据进行解码
+        Args:
+            data: 待解码的数据，一般为字符串
+        Returns:
+            解码后的字符串。
+        """
+        ret = urlsafe_b64decode(data.encode('utf-8'))
+        return ret
 
     @staticmethod
     def wcs_etag(file_path, block_size=1024 * 1024 * 4, binary=False):
@@ -164,10 +189,12 @@ class WcsUtil(object):
     def wcs_entry(bucket, key):
         """Calc e"""
         if key is None:
-            return base64.urlsafe_b64encode(six.b('{0}'.format(bucket)))
+            return base64.urlsafe_b64encode(six.b('{0}'.format(bucket)))\
+                .decode('utf-8')
         else:
             return base64.urlsafe_b64encode(six.b('{0}:{1}'
-                                                  .format(bucket, key)))
+                                                  .format(bucket, key)))\
+                .decode('utf-8')
 
     @staticmethod
     def default_wcs_auth():
