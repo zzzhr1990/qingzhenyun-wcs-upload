@@ -26,6 +26,11 @@ class WcsSliceUploader(object):
         self.params = params
         self.size = os.path.getsize(self.filepath)
         self._calc_files()
+        self.terminate = False
+
+    def stop(self):
+        """stop upload"""
+        self.terminate = True
 
     def _calc_files(self):
         self.num = int(math.ceil(1.0 * self.size / self.block_size))
@@ -82,6 +87,8 @@ class WcsSliceUploader(object):
             blkcode, blktext = self._do_post(
                 url=url, headers=headers, data=bput)
             while self._need_repost(blkcode, blkretry, crc, blktext):
+                if self.terminate:
+                    return self._post_fail(u'STOP_BY_COMMAND')
                 blkcode, blktext = self._do_post(
                     url=url, headers=headers, data=bput)
                 blkretry = blkretry - 1
