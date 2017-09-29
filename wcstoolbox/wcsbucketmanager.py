@@ -1,5 +1,6 @@
 from wcstoolbox.mgrbase import MgrBase
 import logging
+import time
 from wcstoolbox.wcsutil import WcsUtil
 
 
@@ -19,11 +20,31 @@ class WcsBucketManager(MgrBase):
         return '{0}/delete/{1}'.format(self.mgr_host, WcsUtil
                                        .wcs_entry(bucket, key))
 
+    def _do_retry_post(self, url, headers, data=None):
+        try_time = 3
+        while(try_time > 0):
+            code, result = WcsUtil.do_wcs_post(url, headers, data)
+            if code < 400:
+                return code, result
+            try_time = try_time - 1
+            time.sleep(1)
+        return -1, {"message": "Retry Timeout"}
+
+    def _do_retry_get(self, url, headers, data=None):
+        try_time = 3
+        while(try_time > 0):
+            code, result = WcsUtil.do_wcs_get(url, headers, data)
+            if code < 400:
+                return code, result
+            try_time = try_time - 1
+            time.sleep(1)
+        return -1, {"message": "Retry Timeout"}
+
     def delete(self, bucket, key):
         """delete file"""
         url = self._make_delete_url(bucket, key)
         logging.debug('Start to post request of delete %s:%s', bucket, key)
-        code, text = WcsUtil.do_wcs_post(url=url, headers=self.
+        code, text = self._do_retry_post(url=url, headers=self.
                                          _gernerate_headers(url))
         logging.debug('Return code is %d and text of delete request is: %s',
                       code, text)
@@ -37,7 +58,7 @@ class WcsBucketManager(MgrBase):
         """get file stat"""
         url = self._make_filestat_url(bucket, key)
         logging.debug('Start to get the stat of %s:%s', bucket, key)
-        code, text = WcsUtil.do_wcs_get(url=url,
+        code, text = self._do_retry_get(url=url,
                                         headers=self._gernerate_headers(url))
         logging.debug('The return code : %d and text : %s', code, text)
         return code, text
@@ -102,7 +123,7 @@ class WcsBucketManager(MgrBase):
         url = self._make_copy_url(srcbucket, srckey, dstbucket, dstkey)
         logging.debug('Copy object %s from %s to %s:%s',
                       srckey, srcbucket, dstbucket, dstkey)
-        code, text = WcsUtil.do_wcs_post(url=url,
+        code, text = self._do_retry_post(url=url,
                                          headers=self._gernerate_headers(url))
         logging.debug('The return code : %d and text : %s', code, text)
         return code, text
@@ -116,7 +137,7 @@ class WcsBucketManager(MgrBase):
         param['deadline'] = deadline
         body = self._params_parse(param)
         logging.debug('Set deadline of %s to %s', key, deadline)
-        code, text = WcsUtil.do_wcs_post(url=url, data=body,
+        code, text = self._do_retry_post(url=url, data=body,
                                          headers=self._gernerate_headers(url,
                                                                          body))
         logging.debug('The return code : %d and text : %s', code, text)
@@ -137,7 +158,7 @@ class WcsBucketManager(MgrBase):
             options['separate'] = separate
         body = self._params_parse(options)
         logging.debug('Uncompress of %s : %s', bucket, key)
-        code, text = WcsUtil.do_wcs_post(url=url, data=body, headers=self.
+        code, text = self._do_retry_post(url=url, data=body, headers=self.
                                          _gernerate_headers(url, body))
         logging.debug('The return code : %d and text : %s', code, text)
         return code, text

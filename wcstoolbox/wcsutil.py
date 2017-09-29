@@ -147,7 +147,8 @@ class WcsUtil(object):
     def do_wcs_post(url, headers, data=None):
         """Post to wcs"""
         try:
-            resp = requests.post(url, data=data, headers=headers, timeout=(5,5))
+            resp = requests.post(
+                url, data=data, headers=headers, timeout=(5, 5))
             if WcsUtil.wcs_need_retry(resp.status_code):
                 return -1, {}
             else:
@@ -167,7 +168,8 @@ class WcsUtil(object):
     def do_wcs_get(url, headers=None, data=None):
         """Post to wcs"""
         try:
-            resp = requests.get(url, data=data, headers=headers, timeout=(5,5))
+            resp = requests.get(
+                url, data=data, headers=headers, timeout=(5, 5))
             if WcsUtil.wcs_need_retry(resp.status_code):
                 return -1, {}
             else:
