@@ -217,9 +217,12 @@ class WcsUtil(object):
         curl.setopt(pycurl.WRITEDATA, buffer)
         status_code = 0
         try:
+            logging.debug("Starting get %s", url)
             curl.perform()
             status_code = curl.getinfo(pycurl.RESPONSE_CODE)
+            logging.debug("Finish get %s - %d", url, status_code)
         except Exception:
+            logging.debug("Error get %s", url)
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lines = traceback.format_exception(
                 exc_type, exc_value, exc_traceback)
