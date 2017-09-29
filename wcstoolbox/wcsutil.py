@@ -12,6 +12,7 @@ from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError as RConnectionError
 from wcstoolbox.wcsauth import WcsAuth
 from base64 import urlsafe_b64encode, urlsafe_b64decode
+import pycurl
 
 
 class WcsUtil(object):
@@ -167,6 +168,21 @@ class WcsUtil(object):
     @staticmethod
     def do_wcs_get(url, headers=None, data=None):
         """Post to wcs"""
+
+        buffer = BytesIO()
+        curl = pycurl.Curl()
+        curl.setopt(pycurl.URL, url)
+        curl.setopt(pycurl.FOLLOWLOCATION, True)
+        curl.setopt(pycurl.WRITEDATA, buffer)
+        try:
+            curl.perform()
+        finally:
+            curl.close()
+        status_code = curl.getinfo(pycurl.RESPONSE_CODE)
+        if status_code < 400:
+            return status_code, buffer.getvalue().decode('utf-8')
+
+        """
         try:
             resp = requests.get(
                 url, data=data, headers=headers, timeout=(5, 5))
@@ -184,6 +200,7 @@ class WcsUtil(object):
         except RConnectionError:
             logging.warning("%s connection error", url)
             return -1, {"message": "connection Error"}
+        """
 
     @staticmethod
     def wcs_need_retry(code):
