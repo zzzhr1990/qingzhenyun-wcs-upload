@@ -201,6 +201,10 @@ class WcsUtil(object):
         """
 
     @staticmethod
+    def _debug_fun(debug_type, debug_msg):
+        logging.debug("%s - %s", debug_type, debug_msg)
+
+    @staticmethod
     def do_wcs_get(url, headers=None, data=None):
         """Post to wcs"""
 
@@ -217,6 +221,8 @@ class WcsUtil(object):
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
         curl.setopt(pycurl.NOSIGNAL, 1)
+        curl.setopt(pycurl.VERBOSE, 1)
+        curl.setopt(pycurl.DEBUGFUNCTION, WcsUtil._debug_fun)
         # debug enable
         status_code = 0
         try:
