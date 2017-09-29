@@ -221,8 +221,8 @@ class WcsUtil(object):
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
         curl.setopt(pycurl.NOSIGNAL, 1)
-        curl.setopt(pycurl.VERBOSE, 1)
-        curl.setopt(pycurl.DEBUGFUNCTION, WcsUtil._debug_fun)
+        # curl.setopt(pycurl.VERBOSE, 1)
+        # curl.setopt(pycurl.DEBUGFUNCTION, WcsUtil._debug_fun)
         # debug enable
         status_code = 0
         try:
