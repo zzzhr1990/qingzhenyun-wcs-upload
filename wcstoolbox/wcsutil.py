@@ -8,6 +8,8 @@ import base64
 import requests
 import magic
 import json
+import traceback
+import sys
 from io import BytesIO
 from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError as RConnectionError
@@ -148,6 +150,31 @@ class WcsUtil(object):
     @staticmethod
     def do_wcs_post(url, headers, data=None):
         """Post to wcs"""
+        buffer = BytesIO()
+        curl = pycurl.Curl()
+        curl.setopt(pycurl.POST, 1)
+        curl.setopt(pycurl.CONNECTTIMEOUT, 5)
+        curl.setopt(pycurl.TIMEOUT, 10)
+        if headers:
+            post_header = []
+            for key, value in headers.items():
+                post_header.append("%s: %s" % (key, value))
+            curl.setopt(pycurl.HTTPHEADER, post_header)
+        if data:
+            curl.setopt(pycurl.POSTFIELDS, data)
+        curl.setopt(pycurl.URL, url)
+        curl.setopt(pycurl.FOLLOWLOCATION, True)
+        curl.setopt(pycurl.WRITEDATA, buffer)
+        status_code = 0
+        try:
+            curl.perform()
+            status_code = curl.getinfo(pycurl.RESPONSE_CODE)
+        finally:
+            curl.close()
+        if status_code < 400 and status_code > 0:
+            return status_code, json.loads(buffer.getvalue().decode('utf-8'))
+        return status_code, {"message": "request error"}
+        """
         try:
             resp = requests.post(
                 url, data=data, headers=headers, timeout=(5, 5))
@@ -165,6 +192,7 @@ class WcsUtil(object):
         except RConnectionError:
             logging.warning("%s connection error", url)
             return -1, {"message": "connection Error"}
+        """
 
     @staticmethod
     def do_wcs_get(url, headers=None, data=None):
@@ -178,12 +206,19 @@ class WcsUtil(object):
                 post_header.append("%s: %s" % (key, value))
             curl.setopt(pycurl.HTTPHEADER, post_header)
         curl.setopt(pycurl.URL, url)
+        curl.setopt(pycurl.CONNECTTIMEOUT, 5)
+        curl.setopt(pycurl.TIMEOUT, 10)
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
         status_code = 0
         try:
             curl.perform()
             status_code = curl.getinfo(pycurl.RESPONSE_CODE)
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            lines = traceback.format_exception(
+                exc_type, exc_value, exc_traceback)
+            logging.error(''.join('!! ' + line for line in lines))
         finally:
             curl.close()
         if status_code < 400 and status_code > 0:
