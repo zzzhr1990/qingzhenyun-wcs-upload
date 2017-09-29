@@ -3,6 +3,7 @@ import random
 import hashlib
 import binascii
 import six
+import logging
 import base64
 import requests
 import magic
@@ -146,34 +147,40 @@ class WcsUtil(object):
     def do_wcs_post(url, headers, data=None):
         """Post to wcs"""
         try:
-            resp = requests.post(url, data=data, headers=headers, timeout=5)
+            resp = requests.post(url, data=data, headers=headers, timeout=(5,5))
             if WcsUtil.wcs_need_retry(resp.status_code):
                 return -1, {}
             else:
                 try:
                     return resp.status_code, resp.json()
                 except Exception:
+                    logging.warning("%s exception", url)
                     return resp.status_code, {"message": resp.text}
         except Timeout:
+            logging.warning("%s timeout", url)
             return -1, {"message": "connection Timeout"}
         except RConnectionError:
+            logging.warning("%s connection error", url)
             return -1, {"message": "connection Error"}
 
     @staticmethod
     def do_wcs_get(url, headers=None, data=None):
         """Post to wcs"""
         try:
-            resp = requests.get(url, data=data, headers=headers, timeout=5)
+            resp = requests.get(url, data=data, headers=headers, timeout=(5,5))
             if WcsUtil.wcs_need_retry(resp.status_code):
                 return -1, {}
             else:
                 try:
                     return resp.status_code, resp.json()
                 except Exception:
+                    logging.warning("%s exception", url)
                     return resp.status_code, {"message": resp.text}
         except Timeout:
+            logging.warning("%s timeout", url)
             return -1, {"message": "connection Timeout"}
         except RConnectionError:
+            logging.warning("%s connection error", url)
             return -1, {"message": "connection Error"}
 
     @staticmethod
