@@ -171,15 +171,18 @@ class WcsUtil(object):
 
         buffer = BytesIO()
         curl = pycurl.Curl()
+        if headers:
+            curl.setopt(pycurl.HTTPHEADER, headers)
         curl.setopt(pycurl.URL, url)
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
+        status_code = 0
         try:
             curl.perform()
+            status_code = curl.getinfo(pycurl.RESPONSE_CODE)
         finally:
             curl.close()
-        status_code = curl.getinfo(pycurl.RESPONSE_CODE)
-        if status_code < 400:
+        if status_code < 400 and status_code > 0:
             return status_code, buffer.getvalue().decode('utf-8')
 
         """
