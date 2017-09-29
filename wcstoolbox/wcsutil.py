@@ -165,6 +165,7 @@ class WcsUtil(object):
         curl.setopt(pycurl.URL, url)
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
+        curl.setopt(pycurl.NOSIGNAL, 1)
         status_code = 0
         try:
             curl.perform()
@@ -215,6 +216,7 @@ class WcsUtil(object):
         curl.setopt(pycurl.TIMEOUT, 10)
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
+        curl.setopt(pycurl.NOSIGNAL, 1)
         status_code = 0
         try:
             logging.debug("Starting get %s", url)
