@@ -172,8 +172,10 @@ class WcsUtil(object):
         buffer = BytesIO()
         curl = pycurl.Curl()
         if headers:
-            print(headers)
-            curl.setopt(pycurl.HTTPHEADER, headers)
+            post_header = []
+            for key, value in headers.items():
+                post_header.append("%s: %s" % (key, value))
+            curl.setopt(pycurl.HTTPHEADER, post_header)
         curl.setopt(pycurl.URL, url)
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
@@ -185,6 +187,7 @@ class WcsUtil(object):
             curl.close()
         if status_code < 400 and status_code > 0:
             return status_code, buffer.getvalue().decode('utf-8')
+        return -1, {"message": "request error"}
 
         """
         try:
