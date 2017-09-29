@@ -217,6 +217,7 @@ class WcsUtil(object):
         curl.setopt(pycurl.FOLLOWLOCATION, True)
         curl.setopt(pycurl.WRITEDATA, buffer)
         curl.setopt(pycurl.NOSIGNAL, 1)
+        # debug enable
         status_code = 0
         try:
             logging.debug("Starting get %s", url)
