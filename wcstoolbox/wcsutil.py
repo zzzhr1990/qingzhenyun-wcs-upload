@@ -172,6 +172,7 @@ class WcsUtil(object):
         buffer = BytesIO()
         curl = pycurl.Curl()
         if headers:
+            print(headers)
             curl.setopt(pycurl.HTTPHEADER, headers)
         curl.setopt(pycurl.URL, url)
         curl.setopt(pycurl.FOLLOWLOCATION, True)
