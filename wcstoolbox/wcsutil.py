@@ -7,6 +7,7 @@ import logging
 import base64
 import requests
 import magic
+import json
 from io import BytesIO
 from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError as RConnectionError
@@ -186,8 +187,8 @@ class WcsUtil(object):
         finally:
             curl.close()
         if status_code < 400 and status_code > 0:
-            return status_code, buffer.getvalue().decode('utf-8')
-        return -1, {"message": "request error"}
+            return status_code, json.loads(buffer.getvalue().decode('utf-8'))
+        return status_code, {"message": "request error"}
 
         """
         try:
