@@ -29,7 +29,7 @@ class WcsSliceUploader(object):
         self.terminate = False
         self.mime_type = ''
 
-    def set_mime_type(self, type):
+    def set_mime_type(self, mime_type):
         self.mime_type = mime_type
 
     def stop(self):
