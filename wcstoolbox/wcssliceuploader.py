@@ -27,6 +27,10 @@ class WcsSliceUploader(object):
         self.size = os.path.getsize(self.filepath)
         self._calc_files()
         self.terminate = False
+        self.mime_type = ''
+
+    def set_mime_type(self, type):
+        self.mime_type = mime_type
 
     def stop(self):
         """stop upload"""
@@ -174,6 +178,9 @@ class WcsSliceUploader(object):
         headers = {'Authorization': self.uploadtoken}
         headers['Content-Type'] = "text/plain"
         headers['uploadBatch'] = upload_batch
+        if self.mime_type:
+            headers['MimeType'] = self.mime_type
+            headers['Mime-Type'] = self.mime_type
         return headers
 
     def _make_file(self, blockstatus, upload_batch):
