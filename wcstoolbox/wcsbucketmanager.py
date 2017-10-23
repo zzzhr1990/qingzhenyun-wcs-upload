@@ -24,7 +24,7 @@ class WcsBucketManager(MgrBase):
         try_time = 3
         while(try_time > 0):
             code, result = WcsUtil.do_wcs_post(url, headers, data)
-            if code < 400 and code > 0:
+            if code < 500 and code > 0:
                 return code, result
             try_time = try_time - 1
             time.sleep(1)
@@ -34,7 +34,7 @@ class WcsBucketManager(MgrBase):
         try_time = 3
         while(try_time > 0):
             code, result = WcsUtil.do_wcs_get(url, headers, data)
-            if code < 400 and code > 0:
+            if code < 500 and code > 0:
                 return code, result
             try_time = try_time - 1
             time.sleep(1)
