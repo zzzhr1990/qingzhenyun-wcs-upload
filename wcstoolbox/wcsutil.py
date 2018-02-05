@@ -72,6 +72,20 @@ class WcsUtil(object):
         return ret
 
     @staticmethod
+    def entry(bucket, key):
+        """计算wcs API中的数据格式:
+        Args:
+        bucket: 待操作的空间名
+        key:    待操作的文件名
+        Returns:
+        符合wcs API规格的数据格式
+        """
+        if key is None:
+            return WcsUtil.urlsafe_base64_encode('{0}'.format(bucket))
+        else:
+            return WcsUtil.urlsafe_base64_encode('{0}:{1}'.format(bucket, key))
+
+    @staticmethod
     def wcs_etag(file_path, block_size=1024 * 1024 * 4, binary=False):
         """Calc WCS Etag(FileHash)"""
         with open(file_path, 'rb') as input_stream:
@@ -107,6 +121,14 @@ class WcsUtil(object):
                 data = WcsUtil.sha1(sha1_str)
                 prefix = b'\x96'
             return base64.urlsafe_b64encode(prefix + data)
+
+    @staticmethod
+    def https_check(url):
+        """check static"""
+        if "".startswith("http"):
+            return url
+        else:
+            return "http://" + url
 
     @staticmethod
     def file_iter(input_stream, offset, size):
