@@ -125,7 +125,7 @@ class WcsUtil(object):
     @staticmethod
     def https_check(url):
         """check static"""
-        if "".startswith("http"):
+        if url.startswith("http"):
             return url
         else:
             return "http://" + url
