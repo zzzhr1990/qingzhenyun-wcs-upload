@@ -37,8 +37,8 @@ class WcsPersistentFop(MgrBase):
         return WcsUtil.do_wcs_get(url=url)
 
     def _gernerate_headers(self, url, data):
-        reqdata = self._params_parse(data)
-        headers = self._gernerate_headers(
+        reqdata = super(WcsPersistentFop, self)._params_parse(data)
+        headers = super(WcsPersistentFop, self)._gernerate_headers(
             url, body=reqdata)
         return headers, reqdata
 
