@@ -206,7 +206,7 @@ class WcsUtil(object):
         """
         try:
             resp = requests.post(
-                url, data=data, headers=headers, timeout=(15, 60))
+                url, data=data, headers=headers, timeout=(5, 10))
             if WcsUtil.wcs_need_retry(resp.status_code):
                 return -1, {}
             else:
@@ -267,7 +267,7 @@ class WcsUtil(object):
         """
         try:
             resp = requests.get(
-                url, data=data, headers=headers, timeout=(15, 60))
+                url, data=data, headers=headers, timeout=(5, 10))
             if WcsUtil.wcs_need_retry(resp.status_code):
                 return -1, {}
             else:
