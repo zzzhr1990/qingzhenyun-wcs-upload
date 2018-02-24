@@ -37,6 +37,7 @@ class WcsSliceUploader(object):
         self.terminate = False
         self.mime_type = ''
         self.progress_listener = []
+        self.last_time = time.time()
 
     def add_progress_listener(self, listener):
         """add listener"""
@@ -45,6 +46,10 @@ class WcsSliceUploader(object):
     def _fire_progress_event(self, data):
         if not self.progress_listener:
             return
+        last_time = time.time()
+        if last_time - self.last_time < 1000 * 2:
+            return
+        self.last_time = last_time
         for listener in self.progress_listener:
             _thread.start_new_thread(listener, (data,))
 
