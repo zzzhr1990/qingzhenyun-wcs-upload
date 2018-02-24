@@ -9,27 +9,47 @@ import time
 import base64
 import json
 import six
+import _thread
 
 
 class WcsSliceUploader(object):
     """New Upload For WCS"""
 
-    def __init__(self, uploadtoken, filepath, put_url, params=None):
+    def __init__(self,
+                 uploadtoken,
+                 filepath,
+                 put_url,
+                 block_size=1024 * 1024 * 4,
+                 put_size=512 * 1024, file_id=WcsUtil.get_random_string(32),
+                 params=None):
         self.uploadtoken = uploadtoken
         self.filepath = filepath
         self.put_url = put_url
-        self.block_size = 1024 * 1024 * 4
-        self.put_size = 512 * 1024
+        self.block_size = block_size
+        self.put_size = put_size
         self.make_file_retry = 5
         self.put_retry = 5
         self.make_block_retry = 5
         self.params = params
         self.size = os.path.getsize(self.filepath)
         self._calc_files()
+        self.file_id = file_id
         self.terminate = False
         self.mime_type = ''
+        self.progress_listener = []
+
+    def add_progress_listener(self, listener):
+        """add listener"""
+        self.progress_listener.append(listener)
+
+    def _fire_progress_event(self, data):
+        if not self.progress_listener:
+            return
+        for listener in self.progress_listener:
+            _thread.start_new_thread(listener, (data,))
 
     def set_mime_type(self, mime_type):
+        """set mime"""
         self.mime_type = mime_type
 
     def stop(self):
@@ -141,7 +161,7 @@ class WcsSliceUploader(object):
                 return offset, bputcode, bputtext['message']
             time_cost = time.time() - start_time
             file_size = len(bput_next)
-            speed = file_size / time_cost
+            speed = file_size // time_cost
             logging.debug(
                 "Upload block %d of %d (p:%d)[%s], file size %s, speed %s/sec",
                 block_id, self.num, bputnum, ctx,
@@ -149,6 +169,15 @@ class WcsSliceUploader(object):
                 WcsUtil.sizeof_fmt(speed))
             ctx = bputtext['ctx']
             offset_next = offset + bputtext['offset']
+            progress = offset_next // file_size
+            stat_data = {
+                'file_id': self.file_id,
+                'file_size': file_size,
+                'file_upload': offset_next,
+                'progress': progress,
+                'speed': speed
+            }
+            self._fire_progress_event(stat_data)
             bput_next = WcsUtil.readfile(inputfile, offset_next, self.put_size)
             bputnum += 1
         return offset, bputcode, ctx
