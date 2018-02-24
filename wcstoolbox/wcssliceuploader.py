@@ -47,7 +47,7 @@ class WcsSliceUploader(object):
         if not self.progress_listener:
             return
         last_time = time.time()
-        if last_time - self.last_time < 1000 * 2:
+        if last_time - self.last_time < 3:
             return
         self.last_time = last_time
         for listener in self.progress_listener:
