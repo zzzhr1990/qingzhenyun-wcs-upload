@@ -172,7 +172,8 @@ class WcsSliceUploader(object):
             progress = offset_next // file_size
             stat_data = {
                 'file_id': self.file_id,
-                'file_size': file_size,
+                'block_size':file_size,
+                'file_size': self.size,
                 'file_upload': offset_next,
                 'progress': progress,
                 'speed': speed
