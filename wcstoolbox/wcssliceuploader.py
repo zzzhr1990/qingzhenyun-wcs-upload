@@ -165,19 +165,19 @@ class WcsSliceUploader(object):
                     bputcode, json.dumps(bputtext))
                 return offset, bputcode, bputtext['message']
             time_cost = time.time() - start_time
-            file_size = len(bput_next)
-            speed = file_size // time_cost
+            block_size = len(bput_next)
+            speed = block_size // time_cost
             logging.debug(
                 "Upload block %d of %d (p:%d)[%s], file size %s, speed %s/sec",
                 block_id, self.num, bputnum, ctx,
-                WcsUtil.sizeof_fmt(file_size),
+                WcsUtil.sizeof_fmt(self.size),
                 WcsUtil.sizeof_fmt(speed))
             ctx = bputtext['ctx']
             offset_next = offset + bputtext['offset']
-            progress = offset_next // file_size
+            progress = offset_next // self.size
             stat_data = {
                 'file_id': self.file_id,
-                'block_size':file_size,
+                'block_size':block_size,
                 'file_size': self.size,
                 'file_upload': offset_next,
                 'progress': progress,
