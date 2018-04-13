@@ -174,7 +174,7 @@ class WcsSliceUploader(object):
                 WcsUtil.sizeof_fmt(speed))
             ctx = bputtext['ctx']
             offset_next = offset + bputtext['offset']
-            progress = offset_next // self.size
+            progress = offset_next * 100 // self.size
             stat_data = {
                 'file_id': self.file_id,
                 'block_size':block_size,
