@@ -56,7 +56,7 @@ class WcsUtil(object):
         Returns:
             编码后的字符串
         """
-        ret = urlsafe_b64encode(six.b(data))
+        ret = urlsafe_b64encode(data.encode('utf-8'))
         return ret.decode('utf-8')
 
     @staticmethod
@@ -98,7 +98,7 @@ class WcsUtil(object):
                 data = array[0]
                 prefix = b'\x16'
             else:
-                sha1_str = six.b('').join(array)
+                sha1_str = ''.encode('utf-8').join(array)
                 data = WcsUtil.sha1(sha1_str)
                 prefix = b'\x96'
             if binary:
@@ -117,7 +117,7 @@ class WcsUtil(object):
                 data = array[0]
                 prefix = b'\x16'
             else:
-                sha1_str = six.b('').join(array)
+                sha1_str = ''.encode('utf-8').join(array)
                 data = WcsUtil.sha1(sha1_str)
                 prefix = b'\x96'
             return base64.urlsafe_b64encode(prefix + data)
@@ -167,7 +167,7 @@ class WcsUtil(object):
     @staticmethod
     def crc32(data):
         """Calc crc32"""
-        return binascii.crc32(six.b(data)) & 0xffffffff
+        return binascii.crc32(data.encode('utf-8')) & 0xffffffff
 
     @staticmethod
     def do_wcs_post(url, headers, data=None):
@@ -296,11 +296,11 @@ class WcsUtil(object):
     def wcs_entry(bucket, key):
         """Calc e"""
         if key is None:
-            return base64.urlsafe_b64encode(six.b('{0}'.format(bucket)))\
+            return base64.urlsafe_b64encode(bucket.encode('utf-8'))\
                 .decode('utf-8')
         else:
-            return base64.urlsafe_b64encode(six.b('{0}:{1}'
-                                                  .format(bucket, key)))\
+            return base64.urlsafe_b64encode(('{0}:{1}'
+                                                  .format(bucket, key)).encode('utf-8'))\
                 .decode('utf-8')
 
     @staticmethod
