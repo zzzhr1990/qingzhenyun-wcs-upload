@@ -6,7 +6,6 @@ import six
 import logging
 import base64
 import requests
-import magic
 import json
 import traceback
 import sys
