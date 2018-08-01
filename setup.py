@@ -19,9 +19,7 @@ Qingzhenyun WCS SDK""",
       zip_safe=True,
       install_requires=[
           'requests>=2.18.1',
-          'python-magic>=0.4.13',
-          'six>=1.10.0',
-          'urllib3>=1.21.1'
+          'six>=1.10.0'
       ],
       entry_points="""
       # -*- Entry points: -*-

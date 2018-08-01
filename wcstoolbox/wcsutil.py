@@ -139,25 +139,6 @@ class WcsUtil(object):
             yield d_read
             d_read = input_stream.read(size)
 
-    @staticmethod
-    def mime(file_path):
-        """Get mime"""
-        file_mime = u"application/octet-stream"
-        try:
-            file_mime = magic.from_file(file_path, mime=True)
-        except Exception:
-            file_mime = u"application/octet-stream"
-        return file_mime
-
-    @staticmethod
-    def mime_buffer(file_path):
-        """Get mime"""
-        file_mime = u"application/octet-stream"
-        try:
-            file_mime = magic.from_buffer(file_path, mime=True)
-        except Exception:
-            file_mime = u"application/octet-stream"
-        return file_mime
 
     @staticmethod
     def to_ascii(ustr):
