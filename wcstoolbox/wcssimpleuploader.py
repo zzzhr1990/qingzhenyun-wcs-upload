@@ -97,12 +97,14 @@ class WcsSimpleUploader(object):
         logging.warning('Start Post %s', json.dumps(block_info))
         #time.sleep(200)
         with open(self.filepath, 'rb') as input_stream:
-            logging.warning('READ_FILE %s', json.dumps(block_info))
+            logging.warning('READ_FILE')
             if block_info['offset'] > 0:
                 input_stream.seek(block_info['offset'])
+                logging.warning('SEEEK')
             d_read = input_stream.read(self.block_size)
+            logging.warning('READ')
             block_ctx = self._post_block(d_read, block_info['index'], len(d_read))
-            logging.warning('End Post %s', json.dumps(block_info))
+            logging.warning('End Post')
             if not block_ctx:
                 return None
             return block_ctx
