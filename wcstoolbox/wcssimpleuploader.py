@@ -50,7 +50,7 @@ class WcsSimpleUploader(object):
             thread_num = total_blocks
         pool = ThreadPoolExecutor(max_workers=thread_num)
         for key in block_info:
-            fn = pool.submit(self._read_and_post,(block_info[key],))
+            fn = pool.submit(self._read_and_post,block_info[key])
             block_info[key]['fn'] = fn
             logging.warning('DONE? %s',fn.done())
             logging.warning('DONE? %s',fn.done())
