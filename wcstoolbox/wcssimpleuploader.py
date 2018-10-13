@@ -52,6 +52,7 @@ class WcsSimpleUploader(object):
         for key in block_info:
             fn = pool.submit(self._read_and_post,(block_info[key],))
             block_info[key]['fn'] = fn
+            logging.warning('DONE? %s',fn.done())
             #fn.add_done_callback(lambda)
         # check if done
         all_done = False
@@ -69,6 +70,8 @@ class WcsSimpleUploader(object):
             all_done = flg
             if all_done:
                 logging.warning('ALLLLLLLDONE')
+            else:
+                logging.warning('NOT_ALL_DONE')
         # all down
         logging.warning('DONE_____')
         blocks_ctx_str = ''
