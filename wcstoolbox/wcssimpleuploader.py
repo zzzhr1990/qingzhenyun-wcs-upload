@@ -60,6 +60,7 @@ class WcsSimpleUploader(object):
             for key in block_info:
                 fn = block_info[key]['fn']
                 if not fn.done():
+                    logging.warning('FLG_FALSE')
                     flg = False
             if not flg:
                 time.sleep(1)
