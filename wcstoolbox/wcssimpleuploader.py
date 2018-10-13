@@ -4,6 +4,7 @@ import os
 import time
 import json
 from wcstoolbox.wcsutil import WcsUtil
+from concurrent.futures import ThreadPoolExecutor
 
 class WcsSimpleUploader(object):
     """New Simple Uploader For WCS"""
@@ -33,6 +34,63 @@ class WcsSimpleUploader(object):
         """add listener"""
         self.progress_listener.append(listener)
 
+    def start_multi_thread_upload(self, thread_num):
+        blocks = self.size // self.block_size
+        total_blocks = blocks
+        block_info = {}
+        if blocks > 0:
+            for i in range(0,blocks):
+                block_info[str(i)] = {'index':i, 'offset':i * self.block_size, 'size':self.block_size}
+        last_piece = self.size % self.block_size
+        if last_piece > 0:
+            total_blocks = blocks + 1
+            block_info[str(blocks)] = {'index':blocks, 'offset':blocks * self.block_size, 'size':last_piece}
+        # 
+        if total_blocks < thread_num:
+            thread_num = total_blocks
+        pool = ThreadPoolExecutor(max_workers=thread_num)
+        for key in block_info:
+            fn = pool.submit(self._read_and_post,(block_info[key],))
+            block_info[key]['fn'] = fn
+            #fn.add_done_callback(lambda)
+        # check if done
+        all_done = False
+        while not all_done:
+            flg = True
+            for key in block_info:
+                fn = block_info[key]['fn']
+                if not fn.done():
+                    flg = False
+            if not flg:
+                time.sleep(1)
+            flg = all_done
+        # all down
+        blocks_ctx_str = ''
+        for i in range(0,total_blocks):
+            key = str(i)
+            fn = block_info[key]['fn']
+            block_ctx = fn.result()
+            if not block_ctx:
+                logging.warning('File post failed.')
+                return -1, {"message": "Post Failed"}
+            if i > 0:
+                blocks_ctx_str = blocks_ctx_str + ',' + block_ctx
+            else:
+                blocks_ctx_str = blocks_ctx_str + block_ctx
+        file_hash = self._make_file(blocks_ctx_str, self.size)
+        if not file_hash:
+            return -1, {"message": "Post Failed"}
+        return 200, {"hash": file_hash}
+
+    def _read_and_post(self,block_info):
+        with open(self.filepath, 'rb') as input_stream:
+            if block_info['offset'] > 0:
+                input_stream.seek(block_info['offset'])
+            d_read = input_stream.read(self.block_size)
+            block_ctx = self._post_block(d_read, block_info['index'], len(d_read))
+            if not block_ctx:
+                return None
+            return block_ctx
     def start_upload(self):
         """Start Upload"""
         # Read file...
