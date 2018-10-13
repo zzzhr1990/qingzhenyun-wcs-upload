@@ -53,6 +53,8 @@ class WcsSimpleUploader(object):
             fn = pool.submit(self._read_and_post,(block_info[key],))
             block_info[key]['fn'] = fn
             logging.warning('DONE? %s',fn.done())
+            logging.warning('DONE? %s',fn.done())
+            logging.warning('DONE? %s',fn.done())
             #fn.add_done_callback(lambda)
         # check if done
         all_done = False
