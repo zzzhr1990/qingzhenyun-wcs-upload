@@ -150,7 +150,7 @@ class WcsUtil(object):
         return binascii.crc32(data.encode('utf-8')) & 0xffffffff
 
     @staticmethod
-    def do_wcs_post(url, headers, data=None):
+    def do_wcs_post(url, headers, data=None,timeout=(30, 60)):
         """Post to wcs"""
         """
         buffer = BytesIO()
@@ -186,7 +186,7 @@ class WcsUtil(object):
         """
         try:
             resp = requests.post(
-                url, data=data, headers=headers, timeout=(12, 36))
+                url, data=data, headers=headers, timeout=timeout)
             if WcsUtil.wcs_need_retry(resp.status_code):
                 return -1, {}
             else:

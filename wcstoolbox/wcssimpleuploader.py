@@ -57,7 +57,6 @@ class WcsSimpleUploader(object):
             #fn.add_done_callback(lambda)
         # check if done
         all_done = False
-        time.sleep(2000)
         while not all_done:
             flg = True
             for key in block_info:
@@ -166,14 +165,14 @@ class WcsSimpleUploader(object):
 
     def _post_block(self, read_buffer, block_index, current_read_size):
         post_url = '%s/mkblk/%ld/%ld' % (self.put_url,current_read_size, block_index,)
-        #logging.warning('POST %s', post_url)
+        #logging.warning('POST  %s', post_url)
         try_time = 100
         while try_time > 0:
             # try
             headers = {'Authorization': self.uploadtoken}
             headers['Content-Type'] = "application/octet-stream"
             headers['uploadBatch'] = self.file_id
-            status_code, response_json = WcsUtil.do_wcs_post(post_url, headers,read_buffer)
+            status_code, response_json = WcsUtil.do_wcs_post(post_url, headers,read_buffer,(120,240))
             if status_code == 200:
                 if 'ctx' in response_json:
                     return response_json['ctx']
