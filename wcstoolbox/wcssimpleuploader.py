@@ -95,7 +95,7 @@ class WcsSimpleUploader(object):
 
     def _read_and_post(self,block_info):
         try:
-            logging.warning('Start Post %s', json.dumps(block_info))
+            logging.warning('Start Post %d', block_info['index'])
             #time.sleep(200)
             with open(self.filepath, 'rb') as input_stream:
                 logging.warning('READ_FILE')
