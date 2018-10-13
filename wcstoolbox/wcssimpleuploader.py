@@ -94,20 +94,25 @@ class WcsSimpleUploader(object):
         return 200, {"hash": file_hash}
 
     def _read_and_post(self,block_info):
-        logging.warning('Start Post %s', json.dumps(block_info))
-        #time.sleep(200)
-        with open(self.filepath, 'rb') as input_stream:
-            logging.warning('READ_FILE')
-            if block_info['offset'] > 0:
-                input_stream.seek(block_info['offset'])
-                logging.warning('SEEEK')
-            d_read = input_stream.read(self.block_size)
-            logging.warning('READ')
-            block_ctx = self._post_block(d_read, block_info['index'], len(d_read))
-            logging.warning('End Post')
-            if not block_ctx:
-                return None
-            return block_ctx
+        try:
+            logging.warning('Start Post %s', json.dumps(block_info))
+            #time.sleep(200)
+            with open(self.filepath, 'rb') as input_stream:
+                logging.warning('READ_FILE')
+                if block_info['offset'] > 0:
+                    input_stream.seek(block_info['offset'])
+                    logging.warning('SEEEK')
+                d_read = input_stream.read(self.block_size)
+                logging.warning('READ')
+                block_ctx = self._post_block(d_read, block_info['index'], len(d_read))
+                logging.warning('End Post')
+                if not block_ctx:
+                    return None
+                return block_ctx
+        except Exception as identifier:
+            logging.exception('ex %s', identifier)
+            return None
+        
     def start_upload(self):
         """Start Upload"""
         # Read file...
