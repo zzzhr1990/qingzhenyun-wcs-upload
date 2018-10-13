@@ -95,6 +95,7 @@ class WcsSimpleUploader(object):
 
     def _read_and_post(self,block_info):
         logging.warning('Start Post %s', json.dumps(block_info))
+        time.sleep(200)
         with open(self.filepath, 'rb') as input_stream:
             if block_info['offset'] > 0:
                 input_stream.seek(block_info['offset'])
