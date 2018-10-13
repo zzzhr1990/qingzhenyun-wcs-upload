@@ -200,7 +200,7 @@ class WcsUtil(object):
             return -1, {"message": "connection Timeout"}
         except RConnectionError as ex:
             logging.warning("%s connection error", url)
-            logging.exception(ex)
+            # logging.exception(ex)
             return -1, {"message": "connection Error"}
 
     @staticmethod
