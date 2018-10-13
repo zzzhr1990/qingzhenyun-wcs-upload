@@ -63,7 +63,7 @@ class WcsSimpleUploader(object):
                     flg = False
             if not flg:
                 time.sleep(1)
-            flg = all_done
+            all_done = flg
         # all down
         blocks_ctx_str = ''
         for i in range(0,total_blocks):
@@ -83,11 +83,13 @@ class WcsSimpleUploader(object):
         return 200, {"hash": file_hash}
 
     def _read_and_post(self,block_info):
+        logging.warning('Start Post %s', json.dumps(block_info))
         with open(self.filepath, 'rb') as input_stream:
             if block_info['offset'] > 0:
                 input_stream.seek(block_info['offset'])
             d_read = input_stream.read(self.block_size)
             block_ctx = self._post_block(d_read, block_info['index'], len(d_read))
+            logging.warning('End Post %s', json.dumps(block_info))
             if not block_ctx:
                 return None
             return block_ctx
