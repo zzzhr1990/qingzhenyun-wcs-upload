@@ -61,7 +61,6 @@ class WcsSimpleUploader(object):
                 fn = block_info[key]['fn']
                 if not fn.done():
                     flg = False
-                else:
             if not flg:
                 time.sleep(1)
             all_done = flg
