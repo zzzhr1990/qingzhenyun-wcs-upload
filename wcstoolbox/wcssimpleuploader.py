@@ -49,7 +49,7 @@ class WcsSimpleUploader(object):
         if total_blocks < thread_num:
             thread_num = total_blocks
         pool = ThreadPoolExecutor(max_workers=thread_num)
-        pool.daemon = True
+        pool.daemon = False
         for key in block_info:
             #if key != '0':
             fn = pool.submit(self._read_and_post,block_info[key])
