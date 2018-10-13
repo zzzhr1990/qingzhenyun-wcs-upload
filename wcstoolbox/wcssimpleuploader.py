@@ -62,10 +62,15 @@ class WcsSimpleUploader(object):
                 if not fn.done():
                     logging.warning('FLG_FALSE')
                     flg = False
+                else:
+                    logging.warning('FLG_DONE')
             if not flg:
                 time.sleep(1)
             all_done = flg
+            if all_done:
+                logging.warning('ALLLLLLLDONE')
         # all down
+        logging.warning('DONE_____')
         blocks_ctx_str = ''
         for i in range(0,total_blocks):
             key = str(i)
