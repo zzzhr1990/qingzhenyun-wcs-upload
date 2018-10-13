@@ -52,9 +52,6 @@ class WcsSimpleUploader(object):
         for key in block_info:
             fn = pool.submit(self._read_and_post,block_info[key])
             block_info[key]['fn'] = fn
-            logging.warning('DONE? %s',fn.done())
-            logging.warning('DONE? %s',fn.done())
-            logging.warning('DONE? %s',fn.done())
             #fn.add_done_callback(lambda)
         # check if done
         all_done = False
@@ -63,19 +60,12 @@ class WcsSimpleUploader(object):
             for key in block_info:
                 fn = block_info[key]['fn']
                 if not fn.done():
-                    logging.warning('FLG_FALSE')
                     flg = False
                 else:
-                    logging.warning('FLG_DONE')
             if not flg:
                 time.sleep(1)
             all_done = flg
-            if all_done:
-                logging.warning('ALLLLLLLDONE')
-            else:
-                logging.warning('NOT_ALL_DONE')
         # all down
-        logging.warning('DONE_____')
         blocks_ctx_str = ''
         for i in range(0,total_blocks):
             key = str(i)
@@ -98,12 +88,8 @@ class WcsSimpleUploader(object):
             logging.warning('Start Post %d', block_info['index'])
             #time.sleep(200)
             with open(self.filepath, 'rb') as input_stream:
-                logging.warning('READ_FILE')
-                if block_info['offset'] > 0:
                     input_stream.seek(block_info['offset'])
-                    logging.warning('SEEEK')
                 d_read = input_stream.read(self.block_size)
-                logging.warning('READ')
                 block_ctx = self._post_block(d_read, block_info['index'], len(d_read))
                 logging.warning('End Post')
                 if not block_ctx:
