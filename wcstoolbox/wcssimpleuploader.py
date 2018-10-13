@@ -92,9 +92,7 @@ class WcsSimpleUploader(object):
                 if block_info['offset'] > 0:
                     input_stream.seek(block_info['offset'])
                 d_read = input_stream.read(self.block_size)
-                logging.warning('Start Post %d, need post %ld, act %ld', block_info['index'], len(d_read), block_info['size'])
                 block_ctx = self._post_block(d_read, block_info['index'], len(d_read))
-                logging.warning('End Post')
                 if not block_ctx:
                     return None
                 return block_ctx
