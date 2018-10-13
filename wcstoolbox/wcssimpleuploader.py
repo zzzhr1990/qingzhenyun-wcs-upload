@@ -43,7 +43,6 @@ class WcsSimpleUploader(object):
             while True:
                 d_read = input_stream.read(self.block_size)
                 if not d_read:
-                    logging.warning('Fuinish')
                     break
                 current_read_size = len(d_read)
                 block_ctx = self._post_block(d_read, index, current_read_size)
