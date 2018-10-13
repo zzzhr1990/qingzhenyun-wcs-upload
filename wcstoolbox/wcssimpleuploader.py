@@ -29,6 +29,10 @@ class WcsSimpleUploader(object):
         self.progress_listener = []
         #self.last_time = time.time()
 
+    def add_progress_listener(self, listener):
+        """add listener"""
+        self.progress_listener.append(listener)
+
     def start_upload(self):
         """Start Upload"""
         # Read file...
@@ -53,12 +57,23 @@ class WcsSimpleUploader(object):
                 else:
                     blocks = blocks + block_ctx
                 # logging.warning('BLOCK %ld post', index)
+                if self.progress_listener:
+                    progress_obj = {'index':index, 'file_size':self.size, 'post_size':read_size}
+                    for func in self.progress_listener:   
+                        try:
+                            func(progress_obj)
+                        except Exception as ex:
+                            logging.exception('call listener error %s', ex)
                 index = index + 1
             file_hash = self._make_file(blocks, read_size)
             if not file_hash:
                 return -1, {"message": "Post Failed"}
             return 200, {"hash": file_hash}
             # logging.warning('FIN %d - %d', read_size, self.size)
+
+    def set_mime_type(self, mime_type):
+        """set mime"""
+        self.mime_type = mime_type
 
     def _make_file(self, blocks, read_size):
         post_url = '%s/mkfile/%ld' % (self.put_url,read_size,)
@@ -67,6 +82,9 @@ class WcsSimpleUploader(object):
             headers = {'Authorization': self.uploadtoken}
             headers['Content-Type'] = "text/plain"
             headers['uploadBatch'] = self.file_id
+            if self.mime_type:
+                headers['MimeType'] = self.mime_type
+                headers['Mime-Type'] = self.mime_type
             status_code, response_json = WcsUtil.do_wcs_post(post_url, headers,blocks)
             if status_code == 200:
                 if 'hash' in response_json:
